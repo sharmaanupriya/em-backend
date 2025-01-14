@@ -15,8 +15,8 @@ router.get('/', async (req, res) => {
 // Create a new event
 router.post('/', async (req, res) => {
     try {
-      const { title, description, date } = req.body;
-      const newEvent = new Event({ title, description, date });
+      const { title, description, date, category, location } = req.body;
+      const newEvent = new Event({ title, description, date, category, location });
       await newEvent.save();
       res.status(201).json({ message: 'Event created successfully' });
     } catch (err) {
