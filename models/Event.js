@@ -7,6 +7,7 @@ const EventSchema = new mongoose.Schema({
   attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   category: { type: String, required: true },
   location: { type: String, required: true },
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 module.exports = mongoose.model('Event', EventSchema);
