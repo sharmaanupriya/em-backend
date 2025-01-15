@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer(app);  // Create server using express app
 const io = require('socket.io')(server, {
     cors: {
-      origin: 'http://localhost:3000', // Allow frontend origin
+      origin: 'events-management-site.netlify.app', // Allow frontend origin
       methods: ['GET', 'POST'],
     },
   });
@@ -21,7 +21,7 @@ const port = process.env.PORT || 5001;
 app.use(express.json()); // Parse JSON request bodies
 
 // Specific CORS configuration to allow only your frontend's origin
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: 'events-management-site.netlify.app' }));
 
 // Import Routes
 const authRoutes = require('./routes/auth');
