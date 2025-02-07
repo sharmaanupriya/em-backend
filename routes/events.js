@@ -2,6 +2,9 @@ const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const Event = require('../models/Event'); // Adjust the path to your model
 const router = express.Router();
+const multer = require("multer"); // ✅ Import multer
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 // Get all events (public route)
 router.get('/', async (req, res) => {
@@ -13,14 +16,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Create a new event (protected route)
-router.post('/', authMiddleware, async (req, res) => {
+// ✅ Create new event
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { title, description, date, category, location } = req.body;
-    const userId = req.user.id; // Extracted from the token
-    const newEvent = new Event({ title, description, date, category, location, creator: userId });
+    const { title, description, date, category, location, imageUrl } = req.body;
+    const userId = req.user.id;
+    const newEvent = new Event({ title, description, date, category, location, creator: userId, imageUrl });
     await newEvent.save();
-    res.status(201).json({ message: 'Event created successfully' });
+    res.status(201).json({ message: "Event created successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -68,6 +71,31 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     res.status(200).json({ message: 'Event deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Ensure Cloudinary Storage is Configured Correctly
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "event-images",
+    format: async () => "png", // or jpg
+    public_id: (req, file) => Date.now() + "-" + file.originalname,
+  },
+});
+
+const upload = multer({ storage });
+
+// ✅ Image Upload Route
+router.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Image upload failed" });
+    }
+    res.json({ imageUrl: req.file.path });
+  } catch (err) {
+    console.error("Image Upload Error:", err);
+    res.status(500).json({ error: "Internal server error while uploading image" });
   }
 });
 
