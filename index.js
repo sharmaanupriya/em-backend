@@ -42,25 +42,43 @@ app.use(express.json());
 //   })
 // );
 
-// const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']; // ✅ Add frontend URLs
+// Proper CORS Configuration
 const allowedOrigins = ['https://events-management-site.netlify.app'];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // ✅ Allow cookies/auth headers
   })
 );
 
-app.options('*', cors()); // ✅ Ensure OPTIONS requests are handled
+
+// const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']; // ✅ Add frontend URLs
+// const allowedOrigins = ['https://events-management-site.netlify.app'];
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error('Not allowed by CORS'));
+//       }
+//     },
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true, // ✅ Allow cookies/auth headers
+//   })
+// );
+
+// app.options('*', cors()); // ✅ Ensure OPTIONS requests are handled
 
 // Import Routes
 const authRoutes = require('./routes/auth');
