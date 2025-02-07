@@ -25,24 +25,8 @@ const port = process.env.PORT || 5001;
 // Middleware
 app.use(express.json());
 
-// ✅ Proper CORS Configuration
-// const allowedOrigins = ['http://localhost:3001']; // Ensure it's HTTP, not HTTPS
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//     credentials: true, // ✅ Allow cookies/auth headers
-//   })
-// );
-
 // Proper CORS Configuration
+// const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 const allowedOrigins = ['https://events-management-site.netlify.app'];
 
 app.use(
@@ -58,27 +42,6 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
-
-
-// const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']; // ✅ Add frontend URLs
-// const allowedOrigins = ['https://events-management-site.netlify.app'];
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//     credentials: true, // ✅ Allow cookies/auth headers
-//   })
-// );
-
-// app.options('*', cors()); // ✅ Ensure OPTIONS requests are handled
 
 // Import Routes
 const authRoutes = require('./routes/auth');
