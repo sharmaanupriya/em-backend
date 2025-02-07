@@ -62,20 +62,27 @@ router.post('/login', async (req, res) => {
 
     // Create a JWT token
     const token = jwt.sign(
-      { id: user._id, username: user.username, email: user.email },
+      { id: user._id, username: user.username, email: user.email }, // ✅ Ensure username is included
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
+    console.log("✅ Login API - User Data:", user); // ✅ Debug API response
+
     res.status(200).json({
       message: 'Login successful',
       token,
-      user: { id: user._id, username: user.username, email: user.email },
+      user: {
+        id: user._id,
+        username: user.username,  // ✅ Ensure correct username is returned
+        email: user.email
+      },
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error. Please try again later.' });
   }
 });
+
 
 module.exports = router;

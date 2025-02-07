@@ -8,6 +8,7 @@ const EventSchema = new mongoose.Schema({
   category: { type: String, required: true },
   location: { type: String, required: true },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  imageUrl: { type: String },
 });
 
 module.exports = mongoose.model('Event', EventSchema);
