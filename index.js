@@ -65,33 +65,39 @@ let eventAttendees = {}; // Store unique socket connections per event
 io.on("connection", (socket) => {
   console.log(`🔵 New client connected: ${socket.id}`);
 
-  // ✅ Handle User Joining Event
   socket.on("join_event", (eventId) => {
     if (!eventAttendees[eventId]) {
-      eventAttendees[eventId] = new Set(); // Track unique sockets
+      eventAttendees[eventId] = new Set();
     }
-    eventAttendees[eventId].add(socket.id); // Add user socket
+    eventAttendees[eventId].add(socket.id);
 
-    // ✅ Send accurate attendee count
-    io.emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
+    console.log(`👥 Attendee joined Event ${eventId}. Total: ${eventAttendees[eventId].size}`);
+
+    // ✅ Broadcast the updated attendee count ONLY to event attendees
+    io.to(eventId).emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
+
+    socket.join(eventId); // ✅ Ensure socket joins event room
   });
 
-  // ✅ Handle User Leaving Event
   socket.on("leave_event", (eventId) => {
     if (eventAttendees[eventId]) {
-      eventAttendees[eventId].delete(socket.id); // Remove user socket
-      io.emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
+      eventAttendees[eventId].delete(socket.id);
+
+      console.log(`🚪 Attendee left Event ${eventId}. Total: ${eventAttendees[eventId].size}`);
+
+      io.to(eventId).emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
+
+      socket.leave(eventId); // ✅ Ensure socket leaves event room
     }
   });
 
-  // ✅ Handle Disconnection (Remove Attendees)
   socket.on("disconnect", () => {
     console.log(`🔴 Client disconnected: ${socket.id}`);
-    
+
     for (const eventId in eventAttendees) {
       if (eventAttendees[eventId].has(socket.id)) {
         eventAttendees[eventId].delete(socket.id);
-        io.emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
+        io.to(eventId).emit("update_attendees", { eventId, count: eventAttendees[eventId].size });
       }
     }
   });
